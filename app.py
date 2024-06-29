@@ -29,7 +29,7 @@ def text_to_speech(speech_file_path,input_chat):
     client = OpenAI(api_key=api_key)
     response = client.audio.speech.create(
     model="tts-1",
-    voice="alloy",
+    voice="shimmer",
     input=input_chat
     )
     response.stream_to_file(speech_file_path)
