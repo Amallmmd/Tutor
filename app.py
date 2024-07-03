@@ -16,8 +16,8 @@ import random
 load_dotenv()
 
 # client = OpenAI()
-# api_key = os.getenv("OPENAI_API_KEY")
-api_key = st.secrets['OPENAI_API_KEY']
+api_key = os.getenv("OPENAI_API_KEY")
+# api_key = st.secrets['OPENAI_API_KEY']
 
 @dataclass
 class Message:
@@ -42,18 +42,15 @@ def autoplay_audio(file_path: str):
             <source src="data:audio/mp3;base64,{b64}" type="audio/mp3">
             </audio>
             """
-        st.markdown(
-            md,
-            unsafe_allow_html=True,
-        )
+        st.markdown(md, unsafe_allow_html=True)
 
 # Initialize chat history
 if "messages" not in st.session_state:
     st.session_state.messages = []
-    st.session_state.messages.append(Message(origin="ai", message="Hey kid I am here to guide you to the world of Algebra. Feel free to ask me your doubts and concerts, I'll be there with you"))
+    st.session_state.messages.append(Message(origin="ai", message="Hey kid I am here to guide you to the world of Algebra. Feel free to ask me your doubts and concerns, I'll be there with you"))
 
 if "memory" not in st.session_state:
-    st.session_state.memory = ConversationBufferMemory(human_prefix = "Student", ai_prefix = "Tutor")
+    st.session_state.memory = ConversationBufferMemory()
     
 if "bot_response" not in st.session_state:
     llm = ChatOpenAI(
@@ -64,7 +61,7 @@ if "bot_response" not in st.session_state:
         prompt = PromptTemplate(input_variables = ["history", "input"], template = Template.algebra_template),
         llm = llm,
         memory= st.session_state.memory
-    )
+        )
 
 # GUI components
 def main():
@@ -85,12 +82,13 @@ def main():
         # response of the bot through voice
         tutor_response = st.session_state.bot_response.run(user_input)
         with st.chat_message("assistant"):
+            audio_output = "chatbot/audiofileout.wav"
+            text_to_speech(speech_file_path=audio_output,input_chat=tutor_response)
+            autoplay_audio(audio_output)
             st.markdown(tutor_response)
             # Add assistant response to chat history
             st.session_state.messages.append(Message(origin="ai", message=tutor_response))
-        audio_output = "chatbot/audiofileout.wav"
-        text_to_speech(speech_file_path=audio_output,input_chat=tutor_response)
-        autoplay_audio(audio_output)
+            
 
 if __name__ == "__main__":
     main()
