@@ -1,12 +1,14 @@
 from distutils import debug
 import mysql.connector
 import streamlit as st
+import mysql.connector
+
 
 # Establish a connection to MySQL Server
 mydb = mysql.connector.connect(
     host="localhost",
     user="root",
-    password="Amal@123",
+    password="****",
     database="newdb"
 )
 mycursor=mydb.cursor()
@@ -26,7 +28,6 @@ if 'selected_personality' not in st.session_state:
 
 def select_prompt():
     prompts = fetch_prompts()
-
     algebra_options = [row[1] for row in prompts if row[1] is not None]
     tutor_options = [row[2] for row in prompts if row[2] is not None]
     personality_options = [row[3] for row in prompts if row[3] is not None]
@@ -49,12 +50,6 @@ def select_prompt():
     st.write("Selected Algebra Prompt:", st.session_state.selected_algebra)
     st.write("Selected Tutor Prompt:", st.session_state.selected_tutor)
     st.write("Selected Personality Prompt:", st.session_state.selected_personality)
-    # prompts = fetch_prompts()
-    # prompt_options = {row[1]: row[0] for row in prompts}
-    # selected_prompt = st.selectbox(f"Select the {prompt_type} Prompt", options=prompt_options.keys())
-    # if selected_prompt:
-    #     st.write(f"You selected: {selected_prompt}")
-    #     selected_id = prompt_options[selected_prompt]
     
 def add_prompt():
     def insert_or_update_prompt(column, prompt):
@@ -93,8 +88,8 @@ def add_prompt():
             insert_or_update_prompt("personality_prompt", prompt_text)
         st.success(f"{types_of_prompts} Prompt Added Successfully!")
 
-
-# Create Streamlit App
+def delete_prompt():
+    pass    
 def main():
 
     # Display Options for CRUD Operations
@@ -102,7 +97,7 @@ def main():
     # Perform Selected CRUD Operations
     if option=="Create new prompt":
         add_prompt()
-
+        
     elif option == "Select prompt":
         st.subheader("Read Prompts")
         select_prompt()
@@ -111,7 +106,7 @@ def main():
         st.subheader("Delete a Record")
         id=st.number_input("Enter ID",min_value=1)
         if st.button("Delete"):
-            sql="delete from prompt where id =%s"
+            sql=f"UPDATE prompts SET {column} = NULL WHERE id = %s"
             val=(id,)
             mycursor.execute(sql,val)
             mydb.commit()

@@ -12,6 +12,12 @@ from typing import Literal
 from dataclasses import dataclass
 import time
 import random
+import mysql.connector
+import streamlit as st
+import mysql.connector
+# from pages import prompt_config
+from distutils import debug
+
 
 load_dotenv()
 
@@ -47,7 +53,7 @@ def autoplay_audio(file_path: str):
 # Initialize chat history
 if "messages" not in st.session_state:
     st.session_state.messages = []
-    st.session_state.messages.append(Message(origin="ai", message="Hey kid I am here to guide you to the world of Algebra. Feel free to ask me your doubts and concerns, I'll be there with you"))
+    st.session_state.messages.append(Message(origin="ai", message="Hey folks ask me for anything I can give you everything."))
 
 if "memory" not in st.session_state:
     st.session_state.memory = ConversationBufferMemory()
@@ -88,7 +94,6 @@ def main():
             st.markdown(tutor_response)
             # Add assistant response to chat history
             st.session_state.messages.append(Message(origin="ai", message=tutor_response))
-            
 
 if __name__ == "__main__":
     main()
